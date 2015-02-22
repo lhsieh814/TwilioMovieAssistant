@@ -7,6 +7,21 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import com.twilio.sdk.verbs.TwiMLResponse;
+import com.twilio.sdk.verbs.TwiMLException;
+import com.twilio.sdk.verbs.Message;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 public class Main extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -58,6 +73,77 @@ public class Main extends HttpServlet {
     String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + port + dbUri.getPath();
 
     return DriverManager.getConnection(dbUrl, username, password);
+  }
+
+  // service() responds to both GET and POST requests.
+  // You can also use doGet() or doPost()
+  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
+      String msg = request.getParameter("Body");
+      msg = msg.toLowerCase();
+      System.out.println("-->" + msg);
+
+      String result = "";
+
+      String cmd = msg.split(" ")[0];
+      msg = msg.substring(msg.indexOf(' ')+1);
+      
+      if (cmd.equals("usage")) {
+            System.out.println("usage");
+            result = "Twilio Movie Assistant Usage Guide:"
+              + "\nlist: Returns a list of movies available"
+              + "\nmovie name: Returns the movie's showtimes";
+      } else if (cmd.equals("list")) {
+        System.out.println("list");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+//            System.out.println(titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            result += "\n" + i + "-" + title;
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else if (cmd.equals("showtimes")) {
+        System.out.println("showtimes");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+          Elements showtimes = doc.getElementsByClass("showtimes");
+
+//            System.out.println(showtimes.size() + " , " + titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            if ((""+i).equals(msg)) {
+              result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+            }
+          }
+          
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else if (cmd.equals("show")) {
+        System.out.println("show");
+      } else {
+        result = "Invalid command.\nType 'usage' to get list of commands.";
+      }
+      
+      if (result.equals("")) {
+        result = "Cannot complete request: " + msg;
+      }
+
+      Message message = new Message(result);
+      TwiMLResponse twiml = new TwiMLResponse();
+      try {
+          twiml.append(message);
+      } catch (TwiMLException e) {
+          e.printStackTrace();
+      }
   }
 
   public static void main(String[] args) throws Exception {
