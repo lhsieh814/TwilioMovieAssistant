@@ -95,8 +95,8 @@ public class Main extends HttpServlet {
       if (cmd.equals("usage")) {
         System.out.println("usage");
         result = "Twilio Movie Assistant Usage Guide:"
-          + "\nlist: Returns a list of movies available"
-          + "\nshow <movie_num>: Returns the movie's showtimes";
+          + " list: Returns a list of movies available"
+          + ", show <movie_num>: Returns the movie's showtimes";
       } else if (cmd.equals("list")) {
         System.out.println("list");
         Document doc;
@@ -180,7 +180,7 @@ public class Main extends HttpServlet {
       }
 
       System.out.println(result);
-      
+
       Message message = new Message(result);
       TwiMLResponse twiml = new TwiMLResponse();
       try {
