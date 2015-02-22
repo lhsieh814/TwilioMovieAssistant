@@ -82,64 +82,106 @@ public class Main extends HttpServlet {
       msg = msg.toLowerCase();
       System.out.println("-->" + msg);
 
-        String cmd = msg.split(" ")[0];
-        msg = msg.substring(msg.indexOf(' ')+1);
+      String cmd = msg.split(" ")[0];
+      msg = msg.substring(msg.indexOf(' ')+1);
 
-        String result = "";
+      String result = "";
 
-        if (cmd.equals("usage")) {
-          System.out.println("usage");
-          result = "Twilio Movie Assistant Usage Guide:"
-            + "\nlist: Returns a list of movies available"
-            + "\nmovie name: Returns the movie's showtimes";
-        } else if (cmd.equals("list")) {
-          System.out.println("list");
-          Document doc;
+      if (cmd.equals("usage")) {
+        System.out.println("usage");
+        result = "Twilio Movie Assistant Usage Guide:"
+          + "\nlist: Returns a list of movies available"
+          + "\nmovie name: Returns the movie's showtimes";
+      } else if (cmd.equals("list")) {
+        System.out.println("list");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+          System.out.println(titles.size());
+          for (int i = 0; i < titles.size(); i++) {
+            String title = titles.get(i).text().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            result += "\n" + i + "-" + title;
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else if (cmd.equals("show")){
+        System.out.println("showtimes");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+          Elements showtimes = doc.getElementsByClass("showtimes");
+
+          System.out.println(showtimes.size() + " , " + titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            if ((""+i).equals(msg)) {
+              result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+            }
+          }
+          
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } else  if (cmd.equals("reviews")) {
+        Document doc;
+          HttpURLConnection con;
           try {
             doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
             Elements titles = doc.select(".info > h3 > span > a");
             System.out.println(titles.size());
+            String title = "";
             for (int i = 0; i < titles.size(); i++) {
-              String title = titles.get(i).text().split("\\(")[0];
-              title = title.substring(0, title.length()-1);
-              result += "\n" + i + "-" + title;
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        } else if (cmd.equals("show")){
-          System.out.println("showtimes");
-          Document doc;
-          try {
-            doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-            Elements titles = doc.select(".info > h3 > span > a");
-            Elements showtimes = doc.getElementsByClass("showtimes");
-
-            System.out.println(showtimes.size() + " , " + titles.size());
-            for (int i = 1; i <= titles.size(); i++) {
-              String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
+              title = titles.get(i).text().split("\\(")[0];
               title = title.substring(0, title.length()-1);
               if ((""+i).equals(msg)) {
-                result = (titles.get(i).text() + " : " + showtimes.get(i).text());
-              }
+                  result = title;
+                }
             }
-            
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+            result = result.replace(' ', '+');
+          String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=" + result + "&page_limit=10&page=1&apikey=69dxhndmtkxf7f8m8bertygz";
+
+        URL obj = new URL(url);
+        con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        
+        while ((inputLine = in.readLine()) != null) {
+          response.append(inputLine);
         }
         
-        if (result.equals("")) {
-          result = "Cannot complete command: " + msg;
+        JSONParser parser  = new JSONParser();          
+        JSONObject json = (JSONObject) parser.parse(response.toString());
+        JSONArray jsonArray = ((JSONArray)json.get("movies"));
+        JSONObject movie1 = (JSONObject)jsonArray.get(0);
+        result = (String)movie1.get("synopsis");
+        
+        in.close();
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch (ParseException e) {
+          
         }
+      }
+      
+      if (result.equals("")) {
+        result = "Cannot complete command: " + msg;
+      }
 
-        Message message = new Message(result);
-        TwiMLResponse twiml = new TwiMLResponse();
-        try {
-            twiml.append(message);
-        } catch (TwiMLException e) {
-            e.printStackTrace();
-        }
+      Message message = new Message(result);
+      TwiMLResponse twiml = new TwiMLResponse();
+      try {
+          twiml.append(message);
+      } catch (TwiMLException e) {
+          e.printStackTrace();
+      }
 
       response.setContentType("application/xml");
       response.getWriter().print(twiml.toXML());
