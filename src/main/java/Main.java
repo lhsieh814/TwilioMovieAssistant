@@ -82,7 +82,7 @@ public class Main extends HttpServlet {
       msg = msg.toLowerCase();
       System.out.println("-->" + msg);
 
-String cmd = msg.split(" ")[0];
+        String cmd = msg.split(" ")[0];
         msg = msg.substring(msg.indexOf(' ')+1);
 
         String result = "";
@@ -107,7 +107,7 @@ String cmd = msg.split(" ")[0];
           } catch (IOException e) {
             e.printStackTrace();
           }
-        } else {
+        } else if (cmd.equals("show")){
           System.out.println("showtimes");
           Document doc;
           try {
