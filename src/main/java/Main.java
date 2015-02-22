@@ -96,7 +96,8 @@ public class Main extends HttpServlet {
         System.out.println("usage");
         result = "Twilio Movie Assistant Usage Guide:"
           + "\nlist: Returns a list of movies available"
-          + "\nmovie name: Returns the movie's showtimes";
+          + "\nshow <movie_num>: Returns the movie's showtimes"
+          + "\nreview <movie_num>: Returns the movie's synopsis";
       } else if (cmd.equals("list")) {
         System.out.println("list");
         Document doc;
@@ -132,7 +133,7 @@ public class Main extends HttpServlet {
         } catch (IOException e) {
           e.printStackTrace();
         }
-      } else  if (cmd.equals("reviews")) {
+      } else  if (cmd.equals("review")) {
         Document doc;
           HttpURLConnection con;
           try {
@@ -145,10 +146,11 @@ public class Main extends HttpServlet {
               title = title.substring(0, title.length()-1);
               if ((""+i).equals(msg)) {
                   result = title;
-                }
+                  break;
+              }
             }
             result = result.replace(' ', '+');
-          String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=" + result + "&page_limit=10&page=1&apikey=69dxhndmtkxf7f8m8bertygz";
+          String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=" + title + "&page_limit=10&page=1&apikey=69dxhndmtkxf7f8m8bertygz";
 
         URL obj = new URL(url);
         con = (HttpURLConnection) obj.openConnection();
@@ -156,14 +158,14 @@ public class Main extends HttpServlet {
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
-        StringBuffer buf = new StringBuffer();
+        StringBuffer response = new StringBuffer();
         
         while ((inputLine = in.readLine()) != null) {
-          buf.append(inputLine);
+          response.append(inputLine);
         }
         
         JSONParser parser  = new JSONParser();          
-        JSONObject json = (JSONObject) parser.parse(buf.toString());
+        JSONObject json = (JSONObject) parser.parse(response.toString());
         JSONArray jsonArray = ((JSONArray)json.get("movies"));
         JSONObject movie1 = (JSONObject)jsonArray.get(0);
         result = (String)movie1.get("synopsis");
