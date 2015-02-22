@@ -175,7 +175,7 @@ public class Main extends HttpServlet {
       //   } catch (ParseException e) {
           
       //   }
-      // }
+      }
       
       if (result.equals("")) {
         result = "Cannot complete command: " + msg;
