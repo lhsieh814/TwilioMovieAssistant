@@ -175,10 +175,8 @@ public class Main extends HttpServlet {
       //   } catch (ParseException e) {
           
       //   }
-      }
-      
-      if (result.equals("")) {
-        result = "Cannot complete command: " + msg;
+      } else {
+          result = "Cannot complete command: " + msg;
       }
 
       Message message = new Message(result);
