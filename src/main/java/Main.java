@@ -177,20 +177,20 @@ public class Main extends HttpServlet {
       //   }
       // }
       
-      // if (result.equals("")) {
-      //   result = "Cannot complete command: " + msg;
-      // }
+      if (result.equals("")) {
+        result = "Cannot complete command: " + msg;
+      }
 
-      // Message message = new Message(result);
-      // TwiMLResponse twiml = new TwiMLResponse();
-      // try {
-      //     twiml.append(message);
-      // } catch (TwiMLException e) {
-      //     e.printStackTrace();
-      // }
+      Message message = new Message(result);
+      TwiMLResponse twiml = new TwiMLResponse();
+      try {
+          twiml.append(message);
+      } catch (TwiMLException e) {
+          e.printStackTrace();
+      }
 
-      // response.setContentType("application/xml");
-      // response.getWriter().print(twiml.toXML());
+      response.setContentType("application/xml");
+      response.getWriter().print(twiml.toXML());
   }
 
   public static void main(String[] args) throws Exception {
