@@ -124,7 +124,7 @@ public class Main extends HttpServlet {
           for (int i = 1; i <= titles.size(); i++) {
             String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
             title = title.substring(0, title.length()-1);
-            if ((""+i).equals(msg)) {
+            if ((""+(i-1)).equals(msg)) {
               result = (titles.get(i).text() + " : " + showtimes.get(i).text());
             }
           }
