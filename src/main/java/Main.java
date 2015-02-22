@@ -158,14 +158,14 @@ public class Main extends HttpServlet {
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
-        StringBuffer response = new StringBuffer();
+        StringBuffer buf = new StringBuffer();
         
         while ((inputLine = in.readLine()) != null) {
-          response.append(inputLine);
+          buf.append(inputLine);
         }
         
         JSONParser parser  = new JSONParser();          
-        JSONObject json = (JSONObject) parser.parse(response.toString());
+        JSONObject json = (JSONObject) parser.parse(buf.toString());
         JSONArray jsonArray = ((JSONArray)json.get("movies"));
         JSONObject movie1 = (JSONObject)jsonArray.get(0);
         result = (String)movie1.get("synopsis");
