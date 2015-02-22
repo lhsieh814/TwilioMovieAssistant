@@ -90,7 +90,7 @@ public class Main extends HttpServlet {
       String cmd = msg.split(" ")[0];
       msg = msg.substring(msg.indexOf(' ')+1);
 
-      String result = "";
+      String result = "Cannot complete command: " + msg;
 
       if (cmd.equals("usage")) {
         System.out.println("usage");
@@ -179,6 +179,8 @@ public class Main extends HttpServlet {
           result = "Cannot complete command: " + msg;
       }
 
+      System.out.println(result);
+      
       Message message = new Message(result);
       TwiMLResponse twiml = new TwiMLResponse();
       try {
