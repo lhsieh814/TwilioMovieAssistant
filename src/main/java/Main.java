@@ -82,64 +82,64 @@ public class Main extends HttpServlet {
       msg = msg.toLowerCase();
       System.out.println("-->" + msg);
 
-      String cmd = msg.split(" ")[0];
-      msg = msg.substring(msg.indexOf(' ')+1);
+String cmd = msg.split(" ")[0];
+        msg = msg.substring(msg.indexOf(' ')+1);
 
-      String result = "";
+        String result = "";
 
-      if (cmd.equals("usage")) {
-        System.out.println("usage");
-        result = "Twilio Movie Assistant Usage Guide:"
-          + "\nlist: Returns a list of movies available"
-          + "\nmovie name: Returns the movie's showtimes";
-      } else if (cmd.equals("list")) {
-        System.out.println("list");
-        Document doc;
-        try {
-          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-          Elements titles = doc.select(".info > h3 > span > a");
-          System.out.println(titles.size());
-          for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i).text().split("\\(")[0];
-            title = title.substring(0, title.length()-1);
-            result += "\n" + i + "-" + title;
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      } else {
-        System.out.println("showtimes");
-        Document doc;
-        try {
-          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-          Elements titles = doc.select(".info > h3 > span > a");
-          Elements showtimes = doc.getElementsByClass("showtimes");
-
-          System.out.println(showtimes.size() + " , " + titles.size());
-          for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i).text().toLowerCase().split("\\(")[0];
-            title = title.substring(0, title.length()-1);
-            if (title.equals(msg) || (""+i).equals(msg)) {
-              result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+        if (cmd.equals("usage")) {
+          System.out.println("usage");
+          result = "Twilio Movie Assistant Usage Guide:"
+            + "\nlist: Returns a list of movies available"
+            + "\nmovie name: Returns the movie's showtimes";
+        } else if (cmd.equals("list")) {
+          System.out.println("list");
+          Document doc;
+          try {
+            doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+            Elements titles = doc.select(".info > h3 > span > a");
+            System.out.println(titles.size());
+            for (int i = 0; i < titles.size(); i++) {
+              String title = titles.get(i).text().split("\\(")[0];
+              title = title.substring(0, title.length()-1);
+              result += "\n" + i + "-" + title;
             }
+          } catch (IOException e) {
+            e.printStackTrace();
           }
-          
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-      
-      if (result.equals("")) {
-        result = "Cannot complete command: " + msg;
-      }
+        } else {
+          System.out.println("showtimes");
+          Document doc;
+          try {
+            doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+            Elements titles = doc.select(".info > h3 > span > a");
+            Elements showtimes = doc.getElementsByClass("showtimes");
 
-      Message message = new Message(result);
-      TwiMLResponse twiml = new TwiMLResponse();
-      try {
-          twiml.append(message);
-      } catch (TwiMLException e) {
-          e.printStackTrace();
-      }
+            System.out.println(showtimes.size() + " , " + titles.size());
+            for (int i = 1; i <= titles.size(); i++) {
+              String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
+              title = title.substring(0, title.length()-1);
+              if ((""+i).equals(msg)) {
+                result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+              }
+            }
+            
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+        
+        if (result.equals("")) {
+          result = "Cannot complete command: " + msg;
+        }
+
+        Message message = new Message(result);
+        TwiMLResponse twiml = new TwiMLResponse();
+        try {
+            twiml.append(message);
+        } catch (TwiMLException e) {
+            e.printStackTrace();
+        }
 
       response.setContentType("application/xml");
       response.getWriter().print(twiml.toXML());
