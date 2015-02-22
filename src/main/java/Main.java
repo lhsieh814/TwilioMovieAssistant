@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 
-import java.io.BufferedReader;
+           import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -41,9 +41,9 @@ public class Main extends HttpServlet {
 
   private void showDatabase(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-    Connection connection = null;
+       Connection connection = null;
     try {
-      connection = getConnection();
+connection = getConnection();
 
       Statement stmt = connection.createStatement();
       stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
@@ -67,7 +67,7 @@ public class Main extends HttpServlet {
     URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
     String username = dbUri.getUserInfo().split(":")[0];
-    String password = dbUri.getUserInfo().split(":")[1];
+  //    String password = dbUri.getUserInfo().split(":")[1];
     int port = dbUri.getPort();
 
     String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + port + dbUri.getPath();
@@ -91,31 +91,30 @@ public class Main extends HttpServlet {
           + "\nmovie name: Returns the movie's showtimes";
       } else if (msg.equals("list")) {
         System.out.println("list");
-        Document doc;
+Document doc;
         try {
           doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
           Elements titles = doc.select(".info > h3 > span > a");
           System.out.println(titles.size());
           for (int i = 0; i < titles.size(); i++) {
             String title = titles.get(i).text().split("\\(")[0];
-            title = title.substring(0, title.length()-1);
             result += "\n" + i + "-" + title;
           }
         } catch (IOException e) {
-          e.printStackTrace();
+               e.printStackTrace();
         }
       } else {
         System.out.println("showtimes");
         Document doc;
         try {
           doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-          Elements titles = doc.select(".info > h3 > span > a");
+              Elements titles = doc.select(".info > h3 > span > a");
           Elements showtimes = doc.getElementsByClass("showtimes");
 
           System.out.println(showtimes.size() + " , " + titles.size());
           for (int i = 0; i < titles.size(); i++) {
             String title = titles.get(i).text().toLowerCase().split("\\(")[0];
-            title = title.substring(0, title.length()-1);
+  //             title = title.substring(0, title.length()-1);
             if (title.equals(msg) || (""+i).equals(msg)) {
               result = (titles.get(i).text() + " : " + showtimes.get(i).text());
             }
@@ -131,10 +130,10 @@ public class Main extends HttpServlet {
       }
 
       Message message = new Message(result);
-      TwiMLResponse twiml = new TwiMLResponse();
+           TwiMLResponse twiml = new TwiMLResponse();
       try {
           twiml.append(message);
-      } catch (TwiMLException e) {
+			} catch (TwiMLException e) {
           e.printStackTrace();
       }
 
