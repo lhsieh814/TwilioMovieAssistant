@@ -84,27 +84,30 @@ public class Main extends HttpServlet {
 
       String result = "";
 
-      if (msg.equals("usage")) {
-        System.out.println("usage");
-        result = "Twilio Movie Assistant Usage Guide:"
-          + "\nlist: Returns a list of movies available"
-          + "\nmovie name: Returns the movie's showtimes";
-      } else if (msg.equals("list")) {
+      String cmd = msg.split(" ")[0];
+      msg = msg.substring(msg.indexOf(' ')+1);
+      
+      if (cmd.equals("usage")) {
+            System.out.println("usage");
+            result = "Twilio Movie Assistant Usage Guide:"
+              + "\nlist: Returns a list of movies available"
+              + "\nmovie name: Returns the movie's showtimes";
+      } else if (cmd.equals("list")) {
         System.out.println("list");
         Document doc;
         try {
           doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
           Elements titles = doc.select(".info > h3 > span > a");
-          System.out.println(titles.size());
-          for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i).text().split("\\(")[0];
+//            System.out.println(titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().split("\\(")[0];
             title = title.substring(0, title.length()-1);
             result += "\n" + i + "-" + title;
           }
         } catch (IOException e) {
           e.printStackTrace();
         }
-      } else {
+      } else if (cmd.equals("showtimes")) {
         System.out.println("showtimes");
         Document doc;
         try {
@@ -112,11 +115,11 @@ public class Main extends HttpServlet {
           Elements titles = doc.select(".info > h3 > span > a");
           Elements showtimes = doc.getElementsByClass("showtimes");
 
-          System.out.println(showtimes.size() + " , " + titles.size());
-          for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i).text().toLowerCase().split("\\(")[0];
+//            System.out.println(showtimes.size() + " , " + titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
             title = title.substring(0, title.length()-1);
-            if (title.equals(msg) || (""+i).equals(msg)) {
+            if ((""+i).equals(msg)) {
               result = (titles.get(i).text() + " : " + showtimes.get(i).text());
             }
           }
@@ -124,10 +127,14 @@ public class Main extends HttpServlet {
         } catch (IOException e) {
           e.printStackTrace();
         }
+      } else if (cmd.equals("show")) {
+        System.out.println("show");
+      } else {
+        result = "Invalid command.\nType 'usage' to get list of commands.";
       }
       
       if (result.equals("")) {
-        result = "Cannot complete command: " + msg;
+        result = "Cannot complete request: " + msg;
       }
 
       Message message = new Message(result);
@@ -137,9 +144,6 @@ public class Main extends HttpServlet {
       } catch (TwiMLException e) {
           e.printStackTrace();
       }
-
-      response.setContentType("application/xml");
-      response.getWriter().print(twiml.toXML());
   }
 
   public static void main(String[] args) throws Exception {
