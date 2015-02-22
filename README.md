@@ -19,6 +19,7 @@ Return:
     LIST: Returns a list of movies available  
     SHOW movie_num: Returns the movie's showtimes  
   
+
 Send:  
 
     LIST  
@@ -37,6 +38,7 @@ Return:
     10-The Wedding Ringer  
     11-WWE: Fast Lane  
   
+
 Send:  
 
     SHOW 1  
@@ -44,4 +46,4 @@ Return:
 
     American Sniper (2014) : 12:45 pm | 3:45 | 6:45 | 9:50  
 
-
+![Image of Yaktocat](https://github.com/lhsieh814/Twilio2/blob/master/images/twilio_movie_assistant.png)
