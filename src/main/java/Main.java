@@ -96,7 +96,8 @@ public class Main extends HttpServlet {
           System.out.println("usage");
           result = "Twilio Movie Assistant Usage Guide:"
             + "\nlist: Returns a list of movies available"
-            + "\nmovie name: Returns the movie's showtimes";
+            + "\nshow <movie_num>: Returns the movie's showtimes"
+            + "\nreview <movie_num>: Returns the movie's synopsis";
         } else if (cmd.equals("list")) {
           System.out.println("list");
           Document doc;
@@ -121,8 +122,8 @@ public class Main extends HttpServlet {
           Elements showtimes = doc.getElementsByClass("showtimes");
 
           System.out.println(showtimes.size() + " , " + titles.size());
-          for (int i = 1; i <= titles.size(); i++) {
-            String title = titles.get(i-1).text().toLowerCase().split("\\(")[0];
+          for (int i = 0; i < titles.size(); i++) {
+            String title = titles.get(i).text().toLowerCase().split("\\(")[0];
             title = title.substring(0, title.length()-1);
             if ((""+(i+1)).equals(msg)) {
               result = (titles.get(i).text() + " : " + showtimes.get(i).text());
