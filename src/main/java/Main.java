@@ -94,9 +94,7 @@ public class Main extends HttpServlet {
 
       if (cmd.equals("usage")) {
         System.out.println("usage");
-        result = "Twilio Movie Assistant Usage Guide:"
-          + " list: Returns a list of movies available"
-          + ", show <movie_num>: Returns the movie's showtimes";
+        result = "Twilio Movie Assistant Usage Guide: LIST: Returns a list of movies available, SHOW <movie_num>: Returns the movie's showtimes";
       } else if (cmd.equals("list")) {
         System.out.println("list");
         Document doc;
@@ -175,8 +173,6 @@ public class Main extends HttpServlet {
       //   } catch (ParseException e) {
           
       //   }
-      } else {
-          result = "Cannot complete command: " + msg;
       }
 
       System.out.println(result);
