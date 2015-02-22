@@ -96,8 +96,7 @@ public class Main extends HttpServlet {
           System.out.println("usage");
           result = "Twilio Movie Assistant Usage Guide:"
             + "\nlist: Returns a list of movies available"
-            + "\nshow <movie_num>: Returns the movie's showtimes"
-            + "\nreview <movie_num>: Returns the movie's synopsis";
+            + "\nshow <movie_num>: Returns the movie's showtimes";
         } else if (cmd.equals("list")) {
           System.out.println("list");
           Document doc;
@@ -115,83 +114,83 @@ public class Main extends HttpServlet {
         }
       } else if (cmd.equals("show")){
         System.out.println("showtimes");
-        Document doc;
-        try {
-          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-          Elements titles = doc.select(".info > h3 > span > a");
-          Elements showtimes = doc.getElementsByClass("showtimes");
+      //   Document doc;
+      //   try {
+      //     doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+      //     Elements titles = doc.select(".info > h3 > span > a");
+      //     Elements showtimes = doc.getElementsByClass("showtimes");
 
-          System.out.println(showtimes.size() + " , " + titles.size());
-          for (int i = 0; i < titles.size(); i++) {
-            String title = titles.get(i).text().toLowerCase().split("\\(")[0];
-            title = title.substring(0, title.length()-1);
-            if ((""+(i+1)).equals(msg)) {
-              result = (titles.get(i).text() + " : " + showtimes.get(i).text());
-            }
-          }
+      //     System.out.println(showtimes.size() + " , " + titles.size());
+      //     for (int i = 0; i < titles.size(); i++) {
+      //       String title = titles.get(i).text().toLowerCase().split("\\(")[0];
+      //       title = title.substring(0, title.length()-1);
+      //       if ((""+(i+1)).equals(msg)) {
+      //         result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+      //       }
+      //     }
           
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      } else  if (cmd.equals("review")) {
-        Document doc;
-          HttpURLConnection con;
-          try {
-            doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-            Elements titles = doc.select(".info > h3 > span > a");
-            System.out.println(titles.size());
-            String title = "";
-            for (int i = 0; i < titles.size(); i++) {
-              title = titles.get(i).text().split("\\(")[0];
-              title = title.substring(0, title.length()-1);
-              if ((""+i).equals(msg)) {
-                  result = title;
-                  break;
-              }
-            }
-            result = result.replace(' ', '+');
-          String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=" + title + "&page_limit=10&page=1&apikey=69dxhndmtkxf7f8m8bertygz";
+      //   } catch (IOException e) {
+      //     e.printStackTrace();
+      //   }
+      // } else  if (cmd.equals("review")) {
+      //   Document doc;
+      //     HttpURLConnection con;
+      //     try {
+      //       doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+      //       Elements titles = doc.select(".info > h3 > span > a");
+      //       System.out.println(titles.size());
+      //       String title = "";
+      //       for (int i = 0; i < titles.size(); i++) {
+      //         title = titles.get(i).text().split("\\(")[0];
+      //         title = title.substring(0, title.length()-1);
+      //         if ((""+i).equals(msg)) {
+      //             result = title;
+      //             break;
+      //         }
+      //       }
+      //       result = result.replace(' ', '+');
+      //     String url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?q=" + title + "&page_limit=10&page=1&apikey=69dxhndmtkxf7f8m8bertygz";
 
-        URL obj = new URL(url);
-        con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer buf = new StringBuffer();
+      //   URL obj = new URL(url);
+      //   con = (HttpURLConnection) obj.openConnection();
+      //   con.setRequestMethod("GET");
+      //   con.setRequestProperty("User-Agent", "Mozilla/5.0");
+      //   BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+      //   String inputLine;
+      //   StringBuffer buf = new StringBuffer();
         
-        while ((inputLine = in.readLine()) != null) {
-          buf.append(inputLine);
-        }
+      //   while ((inputLine = in.readLine()) != null) {
+      //     buf.append(inputLine);
+      //   }
         
-        JSONParser parser  = new JSONParser();          
-        JSONObject json = (JSONObject) parser.parse(buf.toString());
-        JSONArray jsonArray = ((JSONArray)json.get("movies"));
-        JSONObject movie1 = (JSONObject)jsonArray.get(0);
-        result = (String)movie1.get("synopsis");
+      //   JSONParser parser  = new JSONParser();          
+      //   JSONObject json = (JSONObject) parser.parse(buf.toString());
+      //   JSONArray jsonArray = ((JSONArray)json.get("movies"));
+      //   JSONObject movie1 = (JSONObject)jsonArray.get(0);
+      //   result = (String)movie1.get("synopsis");
         
-        in.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        } catch (ParseException e) {
+      //   in.close();
+      //   } catch (IOException e) {
+      //     e.printStackTrace();
+      //   } catch (ParseException e) {
           
-        }
-      }
+      //   }
+      // }
       
-      if (result.equals("")) {
-        result = "Cannot complete command: " + msg;
-      }
+      // if (result.equals("")) {
+      //   result = "Cannot complete command: " + msg;
+      // }
 
-      Message message = new Message(result);
-      TwiMLResponse twiml = new TwiMLResponse();
-      try {
-          twiml.append(message);
-      } catch (TwiMLException e) {
-          e.printStackTrace();
-      }
+      // Message message = new Message(result);
+      // TwiMLResponse twiml = new TwiMLResponse();
+      // try {
+      //     twiml.append(message);
+      // } catch (TwiMLException e) {
+      //     e.printStackTrace();
+      // }
 
-      response.setContentType("application/xml");
-      response.getWriter().print(twiml.toXML());
+      // response.setContentType("application/xml");
+      // response.getWriter().print(twiml.toXML());
   }
 
   public static void main(String[] args) throws Exception {
