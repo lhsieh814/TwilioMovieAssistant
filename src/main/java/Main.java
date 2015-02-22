@@ -90,7 +90,7 @@ public class Main extends HttpServlet {
       String cmd = msg.split(" ")[0];
       msg = msg.substring(msg.indexOf(' ')+1);
 
-      String result = "Cannot complete command: " + msg;
+      String result = "";
 
       if (cmd.equals("usage")) {
         System.out.println("usage");
@@ -173,6 +173,8 @@ public class Main extends HttpServlet {
       //   } catch (ParseException e) {
           
       //   }
+      } else {
+        result = "Cannot complete command: " + msg;
       }
 
       System.out.println(result);
