@@ -9,15 +9,18 @@ Send SMS to trial account number 438-795-1980 with movie title and revieve the m
 
 ###Examples: 
 
-Send:  
+Send: 
+
     USAGE  
 
 Return:  
+
     Twilio Movie Assistant Usage Guide:  
     LIST: Returns a list of movies available  
     SHOW movie_num: Returns the movie's showtimes  
   
 Send:  
+
     LIST  
 
 Return:  
@@ -35,8 +38,10 @@ Return:
     11-WWE: Fast Lane  
   
 Send:  
+
     SHOW 1  
 Return:  
+
     American Sniper (2014) : 12:45 pm | 3:45 | 6:45 | 9:50  
 
 
