@@ -1,33 +1,45 @@
-# java-getting-started
+# Twilio Movie Assistant (McHacks 2015)
 
-A barebones Java app, which can easily be deployed to Heroku.  
+Send SMS to trial account number 438-795-1980 with movie title and revieve the movie times in ScotiaBank theatre in Montreal.
+ 
+Supported commands:  
+- USAGE --> Returns list of supported commands  
+- LIST --> Returns a numbered list of movies at theatre  
+- SHOW <movie_num> --> Returns the movie's showtimes for the day  
 
-This application support the [Getting Started with Java on Heroku](https://devcenter.heroku.com/articles/getting-started-with-java) article - check it out.
+Examples: 
 
-## Running Locally
+Send: 
+... USAGE  
+Return:  
+... Twilio Movie Assistant Usage Guide:  
+... LIST: Returns a list of movies available  
+... SHOW movie_num: Returns the movie's showtimes  
+  
+Send:  
 
-Make sure you have Java and Maven installed.  Also, install the [Heroku Toolbelt](https://toolbelt.heroku.com/).
+... LIST  
 
-```sh
-$ git clone https://github.com/heroku/java-getting-started.git
-$ cd java-getting-started
-$ mvn install
-$ foreman start web
-```
+Return:  
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+   1-American Sniper  
 
-## Deploying to Heroku
+   2-Hot Tub Time Machine 2  
 
-```sh
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
+   3-Interstellar  
 
-## Documentation
+   4-Jupiter Ascending  
+   5-Kingsman: The Secret Service  
+   6-The Boy Next Door  
+   7-The DUFF  
+   8-The Hobbit: The Battle of the Five Armies  
+   9-Seventh Son  
+   10-The Wedding Ringer  
+   11-WWE: Fast Lane  
+  
+Send:  
+   SHOW 1  
+Return:  
+   American Sniper (2014) : 12:45 pm | 3:45 | 6:45 | 9:50  
 
-For more information about using Java on Heroku, see these Dev Center articles:
-
-- [Java on Heroku](https://devcenter.heroku.com/categories/java)
 
