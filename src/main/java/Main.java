@@ -99,8 +99,8 @@ public class Main extends HttpServlet {
             doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
             Elements titles = doc.select(".info > h3 > span > a");
             System.out.println(titles.size());
-            for (int i = 0; i < titles.size(); i++) {
-              String title = titles.get(i).text().split("\\(")[0];
+            for (int i = 1; i <= titles.size(); i++) {
+              String title = titles.get(i-1).text().split("\\(")[0];
               title = title.substring(0, title.length()-1);
               result += "\n" + i + "-" + title;
             }
