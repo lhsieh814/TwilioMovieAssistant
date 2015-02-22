@@ -92,46 +92,46 @@ public class Main extends HttpServlet {
 
       String result = "";
 
-        if (cmd.equals("usage")) {
-          System.out.println("usage");
-          result = "Twilio Movie Assistant Usage Guide:"
-            + "\nlist: Returns a list of movies available"
-            + "\nshow <movie_num>: Returns the movie's showtimes";
-        } else if (cmd.equals("list")) {
-          System.out.println("list");
-          Document doc;
-          try {
-            doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-            Elements titles = doc.select(".info > h3 > span > a");
-            System.out.println(titles.size());
-            for (int i = 1; i <= titles.size(); i++) {
-              String title = titles.get(i-1).text().split("\\(")[0];
-              title = title.substring(0, title.length()-1);
-              result += "\n" + i + "-" + title;
-            }
+      if (cmd.equals("usage")) {
+        System.out.println("usage");
+        result = "Twilio Movie Assistant Usage Guide:"
+          + "\nlist: Returns a list of movies available"
+          + "\nshow <movie_num>: Returns the movie's showtimes";
+      } else if (cmd.equals("list")) {
+        System.out.println("list");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+          System.out.println(titles.size());
+          for (int i = 1; i <= titles.size(); i++) {
+            String title = titles.get(i-1).text().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            result += "\n" + i + "-" + title;
+          }
         } catch (IOException e) {
           e.printStackTrace();
         }
       } else if (cmd.equals("show")){
         System.out.println("showtimes");
-      //   Document doc;
-      //   try {
-      //     doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
-      //     Elements titles = doc.select(".info > h3 > span > a");
-      //     Elements showtimes = doc.getElementsByClass("showtimes");
+        Document doc;
+        try {
+          doc = Jsoup.connect("http://www.imdb.com/showtimes/cinema/CA/ci0961718/CA/H2W1G6").get();
+          Elements titles = doc.select(".info > h3 > span > a");
+          Elements showtimes = doc.getElementsByClass("showtimes");
 
-      //     System.out.println(showtimes.size() + " , " + titles.size());
-      //     for (int i = 0; i < titles.size(); i++) {
-      //       String title = titles.get(i).text().toLowerCase().split("\\(")[0];
-      //       title = title.substring(0, title.length()-1);
-      //       if ((""+(i+1)).equals(msg)) {
-      //         result = (titles.get(i).text() + " : " + showtimes.get(i).text());
-      //       }
-      //     }
+          System.out.println(showtimes.size() + " , " + titles.size());
+          for (int i = 0; i < titles.size(); i++) {
+            String title = titles.get(i).text().toLowerCase().split("\\(")[0];
+            title = title.substring(0, title.length()-1);
+            if ((""+(i+1)).equals(msg)) {
+              result = (titles.get(i).text() + " : " + showtimes.get(i).text());
+            }
+          }
           
-      //   } catch (IOException e) {
-      //     e.printStackTrace();
-      //   }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       // } else  if (cmd.equals("review")) {
       //   Document doc;
       //     HttpURLConnection con;
